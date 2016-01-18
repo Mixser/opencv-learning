@@ -1,6 +1,8 @@
 import cv2
 from managers import CaptureManager, WindowManager
 
+import filters
+
 
 class Cameo(object):
     def __init__(self):
@@ -14,6 +16,7 @@ class Cameo(object):
 
             with self._capture_manager as f:
                 frame = f.frame
+                filters.recolor_CMV(frame, frame)
             self._window_manager.process_event()
 
     def on_keypress(self, keycode):
