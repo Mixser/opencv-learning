@@ -16,7 +16,6 @@ class Face(object):
         self.mouth_rect = None
 
 
-
 class FaceTracker(object):
     def __init__(self, scale_factor=1.2, min_neighbors=2,
                  flags=cv2.CASCADE_SCALE_IMAGE):
@@ -114,7 +113,6 @@ class FaceTracker(object):
             rects.outline_rect(image, face.mouth_rect, mouth_color)
 
 
-
 class Cameo(object):
     def __init__(self):
         self._window_manager = managers.WindowManager('Cameo', self._on_keypress)
@@ -125,23 +123,25 @@ class Cameo(object):
 
     def run(self):
         self._window_manager.create_window()
+        counter = 0
         while self._window_manager.is_window_created:
-            self._capture_manager.enter_frame()
-            frame = self._capture_manager.frame
-            self._face_tracker.update(frame)
-            faces = self._face_tracker.faces
-            rects.swap_rects(frame, frame, [face.face_rect for face in faces])
+            with self._capture_manager as manager:
+                frame = manager.frame
+                self._face_tracker.update(frame)
+                faces = self._face_tracker.faces
 
-            self._face_tracker.draw_debug_rects(frame)
+                # for face in faces:
+                #     counter += 1
+                #     x, y, w, h = face.face_rect
 
-            self._capture_manager.exit_frame()
+                    # cv2.imwrite('../out/face_{}.png'.format(counter), frame[y: y + h, x: x + w])
+                self._face_tracker.draw_debug_rects(frame)
+
             self._window_manager.process_event()
 
     def _on_keypress(self, keycode):
         if keycode == 27:
             self._window_manager.destroy_window()
-
-
 
 
 if __name__ == '__main__':
